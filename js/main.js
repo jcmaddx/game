@@ -41,40 +41,28 @@ function getNewLocation(oldLoc, keyCode1, keyCode2) {
 }
 
 function moveMap(keyCode) {
-  mapLeft = Math.abs(map.offset().left);
-  mapTop = Math.abs(map.offset().top);
-  varianceW = (map.width() - mapLeft) - windowWidth;
-  varianceH = (map.height() - mapTop) - windowHeight;
+  var mapCoords = {
+    'top' : Math.abs(map.offset().top),
+    'left': Math.abs(map.offset().left)
+  };
+  var variance = (keyCode === 38 || keyCode === 40) ? (map.height() - mapCoords.top) - windowHeight : (map.width() - mapCoords.left) - windowWidth;
+  var attr = (keyCode === 38 || keyCode === 40) ? 'top' : 'left';
 
-  if (keyCode === 38 || keyCode === 40 ) {
-    if(varianceH >= 0){
-      if(keyCode === 38) {
-        if(mapTop !== 0 && mapTop >= 5){
-          //move map down
-          map.css('top', map.offset().top + 5);
-        }
-      } else {
-        if(varianceH >= 5) {
-          //move map up
-          map.css('top', map.offset().top - 5);
-        }
+  var calc = function(attr) {
+    if (variance >= 0) {
+      switch (keyCode) {
+        case 37:
+        case 38:
+          return (mapCoords[attr] !== 0 && mapCoords[attr] >= 5) ? map.offset()[attr] + 5 : map.offset()[attr];
+          break;
+        case 39:
+        case 40:
+          return (variance >= 5) ? map.offset()[attr] - 5 : map.offset()[attr];
+          break;
       }
     }
-  } else {
-    if(varianceW >= 0) {
-      if(keyCode === 37) {
-        if(mapLeft !== 0 && mapLeft >= 5) {
-          //move map right
-          map.css('left', map.offset().left + 5);
-        }
-      } else {
-        if(varianceW >= 5) {
-          //move map left
-          map.css('left', map.offset().left - 5);
-        }
-      }
-    }
-  }
+  };
+  map.css(attr, calc(attr));
 }
 
 function interact () {
@@ -86,7 +74,7 @@ function interact () {
   places.each(function () {
     var offset = $(this).offset();
     if (offsetX >= offset.left && charOffset.left <= offset.left + 90 && offsetY >= offset.top && (charOffset.top + (character.height() / 2)) <= offset.top + 90) {
-      console.log($(this).attr('id'));
+      console.log('Going to '+$(this).attr('id'));
     }
   });
 }
@@ -102,6 +90,10 @@ $(window).resize(function () {
 
 $(window).keydown(function (e) {
   keysPressed[e.which] = true;
+  if( e.which === 32 && !fired){
+    fired = true;
+    interact();
+  }
 });
 
 $(window).keyup(function (e) {
@@ -118,10 +110,5 @@ setInterval(function () {
           return getNewLocation(oldLoc, 38, 40);
         }
     });
-
-    if (keysPressed[32] && !fired) {
-      fired = true;
-      interact();
-    }
 
 }, 20);
