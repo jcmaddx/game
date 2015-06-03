@@ -74,7 +74,21 @@ function moveMap(keyCode) {
         }
       }
     }
-  } 
+  }
+}
+
+function interact () {
+  var places = $('.place');
+  var charOffset = character.offset();
+  var offsetX = (charOffset.left + character.width()) - 10;
+  var offsetY = (charOffset.top + character.height()) - 10;
+
+  places.each(function () {
+    var offset = $(this).offset();
+    if (offsetX >= offset.left && charOffset.left <= offset.left + 90 && offsetY >= offset.top && (charOffset.top + (character.height() / 2)) <= offset.top + 90) {
+      console.log($(this).attr('id'));
+    }
+  });
 }
 
 $(window).resize(function () {
@@ -107,7 +121,7 @@ setInterval(function () {
 
     if (keysPressed[32] && !fired) {
       fired = true;
-      // call interaction function once here
+      interact();
     }
 
 }, 20);

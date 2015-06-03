@@ -20,6 +20,28 @@ html, body {
   left: 0;
 }
 
+.places {
+  min-height: 100%;
+  position: relative;
+}
+
+.place {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: blue;
+}
+
+#place1 {
+  top: 900px;
+  left: 1800px;
+}
+
+#place2 {
+  top: 400px;
+  left: 1200px;
+}
+
 .character {
   width: 100px;
   height: 200px;
