@@ -74,10 +74,17 @@ function interact () {
   places.each(function () {
     var offset = $(this).offset();
     if (offsetX >= offset.left && charOffset.left <= offset.left + 90 && offsetY >= offset.top && (charOffset.top + (character.height() / 2)) <= offset.top + 90) {
-      console.log('Going to '+$(this).attr('id'));
+      inOut($(this).attr('id'));
     }
   });
 }
+
+function inOut (stage) {
+  $('.stage').hide();
+  $('.'+stage).show();
+  $('.theater').toggle();
+  $('.world').toggleClass('outside').toggleClass('inside');
+};
 
 $(window).resize(function () {
   windowHeight = $(window).height();
@@ -94,6 +101,7 @@ $(window).keydown(function (e) {
     fired = true;
     interact();
   }
+  (e.which === 27) ? inOut() : false;
 });
 
 $(window).keyup(function (e) {
