@@ -8,9 +8,9 @@ var map = $('.map'),
     keysPressed = {},
     distanceToMove = 5,
     fired = false,
-    mapLeft, mapTop, varianceW, varianceH;
+    actor;
 
-function getNewLocation(oldLoc, keyCode1, keyCode2) {
+function getCharLocation(oldLoc, keyCode1, keyCode2) {
     var temp;
     var newLoc = parseInt(oldLoc, 10)
                   - (keysPressed[keyCode1] ? distanceToMove : 0)
@@ -40,6 +40,24 @@ function getNewLocation(oldLoc, keyCode1, keyCode2) {
     }
 }
 
+function getCurrentActor() {
+  $('.stage').each(function() {
+    var $this = $(this);
+    if($this.css('display') === 'block') {
+          console.log($this);
+      return $this.attr('class');
+    }
+  });
+};
+
+function getActorLocation(oldLoc, keyCode1, keyCode2) {
+    var newLoc = parseInt(oldLoc, 10)
+                  - (keysPressed[keyCode1] ? distanceToMove : 0)
+                  + (keysPressed[keyCode2] ? distanceToMove : 0);
+
+    return (newLoc < 20) ? 20 : (newLoc > maxX) ? maxX : newLoc;
+}
+
 function moveMap(keyCode) {
   var mapCoords = {
     'top' : Math.abs(map.offset().top),
@@ -65,7 +83,7 @@ function moveMap(keyCode) {
   map.css(attr, calc(attr));
 }
 
-function interact () {
+function mapInteract () {
   var places = $('.place');
   var charOffset = character.offset();
   var offsetX = (charOffset.left + character.width()) - 10;
@@ -74,16 +92,23 @@ function interact () {
   places.each(function () {
     var offset = $(this).offset();
     if (offsetX >= offset.left && charOffset.left <= offset.left + 90 && offsetY >= offset.top && (charOffset.top + (character.height() / 2)) <= offset.top + 90) {
-      inOut($(this).attr('id'));
+      transition($(this).attr('id'));
     }
   });
 }
 
-function inOut (stage) {
-  $('.stage').hide();
-  $('.'+stage).show();
-  $('.theater').toggle();
-  $('.world').toggleClass('outside').toggleClass('inside');
+function transition (stage) {
+  if (stage) {
+    actor = $('.'+stage).children('.actor');
+    $('.stage').hide();
+    $('.'+stage).show();
+    $('.theater').show();
+    $('.world').removeClass('outside').addClass('inside');
+  } else {
+    $('.stage').hide();
+    $('.theater').hide();
+    $('.world').removeClass('inside').addClass('outside');
+  }
 };
 
 $(window).resize(function () {
@@ -99,9 +124,9 @@ $(window).keydown(function (e) {
   keysPressed[e.which] = true;
   if( e.which === 32 && !fired){
     fired = true;
-    interact();
+    mapInteract();
   }
-  (e.which === 27) ? inOut() : false;
+  (e.which === 27) ? transition() : false;
 });
 
 $(window).keyup(function (e) {
@@ -110,13 +135,21 @@ $(window).keyup(function (e) {
 });
 
 setInterval(function () {
+  if($('.world').hasClass('outside')) {
     character.css({
-        left: function (index, oldLoc) {
-          return getNewLocation(oldLoc, 37, 39);
-        },
-        top: function (index, oldLoc) {
-          return getNewLocation(oldLoc, 38, 40);
-        }
+      left: function (index, oldLoc) {
+        return getCharLocation(oldLoc, 37, 39);
+      },
+      top: function (index, oldLoc) {
+        return getCharLocation(oldLoc, 38, 40);
+      }
     });
+  } else {
+    actor.css({
+      left: function (index, oldLoc) {
+        return getActorLocation(oldLoc, 37, 39);
+      }
+    });
+  }
 
 }, 20);

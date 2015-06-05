@@ -50,6 +50,7 @@ html, body {
   background: black;
   position: relative;
   display: none;
+  z-index: 100;
 }
 
 .stage {
@@ -72,11 +73,18 @@ html, body {
   background: green;
 }
 
-.character {
+.character, .actor {
   width: 100px;
   height: 200px;
   position: absolute;
   top: 50%;
   left: 50%;
   background: red;
+}
+
+.actor {
+  top: auto;
+  bottom: 50px;
+  left: 100px;
+  background: yellow;
 }
