@@ -74,12 +74,56 @@ html, body {
 }
 
 .character, .actor {
-  width: 100px;
+  width: 130px;
   height: 200px;
   position: absolute;
   top: 50%;
   left: 50%;
-  background: red;
+  background: url('../images/chrono.png') no-repeat 0 0;
+  background-size: 520px 1800px;
+}
+
+.character.north {
+  background-position: -260px 0;
+}
+.character.west {
+  background-position: -130px 0;
+}
+.character.east {
+  background-position: -390px 0;
+}
+
+@keyframes walk_north {
+  100% { background-position: -260px -1400px; }
+}
+
+@keyframes walk_south {
+  100% { background-position: 0 -1400px; }
+}
+
+@keyframes walk_east {
+  100% { background-position: -390px -1400px; }
+}
+
+@keyframes walk_west {
+  100% { background-position: -130px -1400px; }
+}
+
+.character.north.walk {
+  background-position: -260px -200px;
+  animation: walk_north .8s steps(6) infinite;
+}
+.character.south.walk {
+  background-position: 0 -200px;
+  animation: walk_south .8s steps(6) infinite;
+}
+.character.east.walk {
+  background-position: -390px -200px;
+  animation: walk_east .8s steps(6) infinite;
+}
+.character.west.walk {
+  background-position: -130px -200px;
+  animation: walk_west .8s steps(6) infinite;
 }
 
 .actor {

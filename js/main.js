@@ -111,6 +111,36 @@ function transition (stage) {
   }
 };
 
+function animate_character (key) {
+  $('.character').addClass('walk');
+  switch(key) {
+    case 37:
+      $('.character').removeClass('north south east').addClass('west');
+      break;
+    case 38:
+      $('.character').removeClass('south east west').addClass('north');
+      break;
+    case 39:
+      $('.character').removeClass('north south west').addClass('east');
+      break;
+    case 40:
+      $('.character').removeClass('north east west').addClass('south');
+      break;
+  }
+}
+
+function adjust_character () {
+  for (var k in keysPressed) {
+    if (!keysPressed.hasOwnProperty(k)) continue;
+    if (keysPressed[k] !== true) {
+      $('.character').removeClass('walk');
+      break;
+    } else {
+      animate_character(k);
+    }
+  }
+}
+
 $(window).resize(function () {
   windowHeight = $(window).height();
   windowWidth = $(window).width();
@@ -127,11 +157,13 @@ $(window).keydown(function (e) {
     mapInteract();
   }
   (e.which === 27) ? transition() : false;
+  animate_character(e.which);
 });
 
 $(window).keyup(function (e) {
   keysPressed[e.which] = false;
   fired = false;
+  adjust_character();
 });
 
 setInterval(function () {
